@@ -87,12 +87,3 @@ We will use Fabric endorsement policies to require multiple org approvals for se
 - **Chaincode bugs/time →** Mitigation: test-first development, unit tests for each function, and event assertions in CI.
 
 ---
-
-### What we must have by end of Week 5
-- `docs/PROPOSAL.md` committed (this file).  
-- Public repo initialized and linked in section 9.  
-- Project board with ≥6 stories.  
-- Roles assigned and weekly standup scheduled.
-
-**Demo scene (60s):** Scan a QR on a batch → consumer portal shows the batch path (Farmer → Distributor → Retailer) with timestamps and signatures. If a temperature breach happened earlier, the portal flags it. This is the simple end‑to‑end demo we will aim to show.
-
