@@ -44,7 +44,8 @@ Walmart is one of the most cited real-world adopters of blockchain in food suppl
 - **Analytics dashboard** — simple KPIs (verifiability rate, breach rate) with light DP noise for aggregated metrics.
 
 ## 6. Architecture Sketch
-![Architecture diagram](./food_supply_chain_architecture.png)
+![WhatsApp Image 2025-09-28 at 22 32 07_4d66fc61](https://github.com/user-attachments/assets/2aad4b32-5dce-42bf-8828-2c383b3d036e)
+
 
 **Components & flow (simple explanation):**
 - **Actors:** Farmer → Distributor → Retailer → Consumer. Physical goods flow left→right.
