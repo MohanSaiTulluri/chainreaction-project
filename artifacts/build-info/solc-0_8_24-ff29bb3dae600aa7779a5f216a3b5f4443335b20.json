@@ -1,0 +1,35 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_24-ff29bb3dae600aa7779a5f216a3b5f4443335b20",
+  "solcVersion": "0.8.24",
+  "solcLongVersion": "0.8.24+commit.e11b9ed9",
+  "userSourceNameMap": {
+    "contracts/FoodSupplyChain.sol": "project/contracts/FoodSupplyChain.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "shanghai",
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/FoodSupplyChain.sol": {
+        "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.24;\n\n/// @title FoodSupplyChain (simplified)\n/// @notice Minimal, academic-friendly traceability contract with no role gating.\n/// Anyone can create a batch, attach CIDs, and mark a batch as shipped.\ncontract FoodSupplyChain {\n\n    enum Status { Created, Shipped, Received, Closed }\n\n    struct Batch {\n        string product;\n        string origin;\n        uint256 quantity;\n        string unit;\n        string batchId; // human readable id\n        uint256 createdAt;\n        Status status;\n        address farmer;\n        string[] cids; // IPFS or other content addresses\n        address lastTo; // destination used in ship\n    }\n\n    struct CreateBatchInput {\n        string product;\n        string origin;\n        uint256 quantity;\n        string unit;\n        string batchId;\n    }\n\n    // storage\n    mapping(bytes32 => Batch) private _batches;\n    mapping(address => bytes32[]) private _farmerBatches; // index for convenience\n\n    // events\n    event BatchCreated(string batchId, address indexed farmer, uint256 at);\n    event BatchCIDAdded(string batchId, string cid);\n    event BatchShipped(string batchId, address indexed to, uint256 at);\n\n    constructor() {}\n\n    function _idOf(string memory batchId) internal pure returns (bytes32) {\n        return keccak256(bytes(batchId));\n    }\n\n    /// @notice Create a new batch (no role checks for simplicity)\n    function createBatch(CreateBatchInput calldata input) external {\n        require(bytes(input.batchId).length > 0, \"batchId required\");\n        require(bytes(input.product).length > 0, \"product required\");\n        require(bytes(input.unit).length > 0, \"unit required\");\n        require(input.quantity > 0, \"qty > 0\");\n\n        bytes32 id = _idOf(input.batchId);\n        require(_batches[id].createdAt == 0, \"batch exists\");\n\n        Batch storage b = _batches[id];\n        b.product = input.product;\n        b.origin = input.origin;\n        b.quantity = input.quantity;\n        b.unit = input.unit;\n        b.batchId = input.batchId;\n        b.createdAt = block.timestamp;\n        b.status = Status.Created;\n        b.farmer = msg.sender;\n\n        _farmerBatches[msg.sender].push(id);\n        emit BatchCreated(input.batchId, msg.sender, block.timestamp);\n    }\n\n    /// @notice Attach a CID (document, photo, COA) to a batch\n    function attachCID(string calldata batchId, string calldata cid) external {\n        bytes32 id = _idOf(batchId);\n        Batch storage b = _batches[id];\n        require(b.createdAt != 0, \"not found\");\n        b.cids.push(cid);\n        emit BatchCIDAdded(batchId, cid);\n    }\n\n    /// @notice Mark a batch as shipped to a distributor\n    function shipBatch(string calldata batchId, address toDistributor) external {\n        bytes32 id = _idOf(batchId);\n        Batch storage b = _batches[id];\n        require(b.createdAt != 0, \"not found\");\n        require(b.status == Status.Created, \"bad status\");\n        b.status = Status.Shipped;\n        b.lastTo = toDistributor;\n        emit BatchShipped(batchId, toDistributor, block.timestamp);\n    }\n\n    // views\n    function getBatch(string calldata batchId) external view returns (Batch memory) {\n        bytes32 id = _idOf(batchId);\n        return _batches[id];\n    }\n\n    function listMyBatchIds(address farmer) external view returns (bytes32[] memory) {\n        return _farmerBatches[farmer];\n    }\n}\n"
+      }
+    }
+  }
+}

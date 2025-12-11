@@ -1,0 +1,5 @@
+await hre.ethers.provider.getTransactionReceipt('0xad3ffe84fd5bcb9515a9232636dedd2122afe9f901ebcdf705f659823d316e7c')
+await ethers.provider.getTransactionReceipt('0xad3ffe84fd5bcb9515a9232636dedd2122afe9f901ebcdf705f659823d316e7c')
+> await hre.ethers.provider.getTransactionReceipt('0x…')
+const { ethers } = hre;
+await ethers.provider.getTransactionReceipt('0x45e977d2fa929cc026bf227bd66697a46a111dd9c19ee794fec2abbe82752e27')
